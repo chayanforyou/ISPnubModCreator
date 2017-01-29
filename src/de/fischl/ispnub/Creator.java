@@ -53,7 +53,7 @@ public class Creator {
         Arrays.fill(mem, (byte)0xff);
         
         // read in main hex file and place it on start of flash memory
-        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ispnub_atmega1284p.hex")), mem, 0);
+        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ISPnub_groene.hex")), mem, 0);
 
         // parse script file
         System.out.print("Parse script file \"" + args[0] + "\"...");
