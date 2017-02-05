@@ -27,7 +27,7 @@ public class Creator {
     public static final int SCRIPT_STARTADDRESS = 0x1000;
     public static final int UC_MEMORY_SIZE = 128 * 1024;
     public static final int TARGET_MEMORY_SIZE = 256 * 1024;
-    public static String VERSION = "1.3";
+    public static String VERSION = "1.4";
     
     public static void main(String[] args) throws IOException {
 
@@ -36,16 +36,35 @@ public class Creator {
         System.out.println("HEX file creator for ISPnub modules");
         System.out.println();
         
-        // check if there is scriptfile argument
-        if (args.length < 1) {
-            System.out.println("Usage: java -jar ISPnubCreator.jar scriptfile [outfile (ispnub.hex)]");
+        // check if there is scriptfile & ISPnubAVR argument
+        if (args.length <= 2) {
+            System.out.println("Usage: java -jar ISPnubCreator.jar scriptfile ISPnubAVR [outfile (ispnub.hex)]");
             return;
         }
+		
+		String ISPnubAVR = (args[1]).toLowerCase();
+		String lowFuse="";
+		String highFuse="";
+		String lockFuse="";
+		switch(ISPnubAVR) {
+			case "atmega1284p":
+				lowFuse="0xE2";
+				highFuse="0xD9";
+				lockFuse="0x3C";
+			case "atmega328_8mhz":
+			case "atmega328_16mhz":
+				
+			break;
+			default:
+				System.out.println("AVR not supported");
+				return;
+		}
+		
         
         // determine outfile name
-        String outfilename = "ispnub.hex";
-        if (args.length >= 2) {
-            outfilename = args[1];
+        String outfilename = "ispnubInclTargetFW_" + ISPnubAVR + ".hex";
+        if (args.length >= 3) {
+            outfilename = args[2];
         }
         
         // prepare flash memory
@@ -53,8 +72,10 @@ public class Creator {
         Arrays.fill(mem, (byte)0xff);
         
         // read in main hex file and place it on start of flash memory
-        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ISPnub_groene.hex")), mem, 0);
-
+		System.out.print("Reading main hex file \"" + ISPnubAVR + ".hex\"...");
+        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ispnub_" + ISPnubAVR + ".hex") ), mem, 0);
+		System.out.println(" done.");
+		
         // parse script file
         System.out.print("Parse script file \"" + args[0] + "\"...");
         int lastpos = ISPScript.parse(args[0], mem, SCRIPT_STARTADDRESS);
@@ -68,7 +89,7 @@ public class Creator {
         // we have finished
         System.out.println();
         System.out.println("Finished! Now you can flash the ISPnub module, e.g. with avrdude:");
-        System.out.println("avrdude -c YOURPROGRAMMER -p atmega1284p -U hfuse:w:0xD9:m -U lfuse:w:0xE2:m -U flash:w:" + outfilename + " -U lock:w:0x3C:m");
+        System.out.println("avrdude -c YOURPROGRAMMER -p " + ISPnubAVR + "-U lfuse:w:" + lowFuse + ":m -U hfuse:w:" + highFuse + ":m -U flash:w:" + outfilename + " -U lock:w:" + lockFuse + ":m");
         System.out.println();
     }
 }
