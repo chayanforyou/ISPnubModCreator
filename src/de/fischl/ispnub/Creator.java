@@ -48,6 +48,7 @@ public class Creator {
 		String lockFuse="";
 		switch(ISPnubAVR) {
 			case "atmega1284p":
+			case "atmega1284p_compat":
 				lowFuse="0xE2";
 				highFuse="0xD9";
 				lockFuse="0x3C";
@@ -73,7 +74,7 @@ public class Creator {
         
         // read in main hex file and place it on start of flash memory
 		System.out.print("Reading main hex file \"" + ISPnubAVR + ".hex\"...");
-        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ispnub_" + ISPnubAVR + ".hex") ), mem, 0);
+        HexFile.read(new InputStreamReader(Creator.class.getResourceAsStream("/res/ispnubmod_" + ISPnubAVR + ".hex") ), mem, 0);
 		System.out.println(" done.");
 		
         // parse script file
