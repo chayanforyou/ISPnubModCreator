@@ -1,0 +1,69 @@
+; -----------------------------------------------------------------------------
+; Example programming instructions for ISPnub (http://www.fischl.de/ispnub/)
+;
+; Instructions for ATmega32A. See ATmega-datasheet for more information about
+; single spi instructions.
+;
+; This is an enhanced example which uses clock switching to speed up the
+; programming process. After programming the clock is set back to 4 MHz.
+;
+; -----------------------------------------------------------------------------
+
+; -----------------------------------------------------------------------------
+; Check chip signature and set fuses to internal 9.6MHz, so higher sck can be used (faster programming)
+; -----------------------------------------------------------------------------
+CONNECT 250000                             ; connect with SCK = 250 kHz
+
+SPIVERIFY 0x30, 0x00, 0x00, 0x00, 0x1E    ; check signature byte 0x00 (0x1E = manufactured by Atmel)
+SPIVERIFY 0x30, 0x00, 0x01, 0x00, 0x90    ; check signature byte 0x01 (0x90 = 1KB Flash memory)
+SPIVERIFY 0x30, 0x00, 0x02, 0x00, 0x07    ; check signature byte 0x02 (0x07 = attiny13(a) device)
+
+SPIWRITE  0xAC, 0x80, 0x00, 0x00          ; chip erase
+WAIT 1                                    ; wait 10 ms
+
+; write low fuses
+SPIWRITE  0xAC, 0xA0, 0x00, 0x7A          ; write fuse bits (use internal 9.6 MHz)
+WAIT 1                                    ; wait 10 ms
+SPIVERIFY 0x50, 0x00, 0x00, 0x00, 0x7A    ; check fuse bits
+
+; write high fuses
+SPIWRITE  0xAC, 0xA8, 0x00, 0xF9          ; write high fuse bits
+WAIT 1                                    ; wait 10 ms
+SPIVERIFY 0x58, 0x08, 0x00, 0x00, 0xF9    ; check high fuse bits
+
+DISCONNECT
+
+
+; -----------------------------------------------------------------------------
+; Write eeprom and flash 
+; -----------------------------------------------------------------------------
+CONNECT 4000000                           ; connect with SCK = 4 MHz
+
+FLASH ./input/target_firmware.hex, 0, 32                     ; flash hex file starting at address 0 with pagesize 32 bytes (16 words)
+
+EEPROM ./input/target_eeprom.eep, 0, 4					; if flashing fails, set page to 0 to enable byte-wise falshing instead pagewise
+
+
+DISCONNECT                                ; disconnect SPI
+
+
+; -----------------------------------------------------------------------------
+; Write lock bits
+; -----------------------------------------------------------------------------
+CONNECT 250000                             ; connect with SCK = 250 kHz
+
+;FC: prog + verify disabled
+
+SPIWRITE  0xAC, 0xE0, 0x00, 0xFC          ; write lock bits
+WAIT 1                                    ; wait 10 ms
+SPIVERIFY 0x58, 0x00, 0x00, 0x00, 0xFC    ; check lock bits
+
+DISCONNECT
+
+
+; -----------------------------------------------------------------------------
+; Decrement counter and exit 
+; -----------------------------------------------------------------------------
+; DECCOUNTER 100                            ; decrement cycle counter (allow 100 programming cycles)
+END
+
