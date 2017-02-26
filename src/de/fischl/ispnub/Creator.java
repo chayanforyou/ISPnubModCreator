@@ -45,19 +45,35 @@ public class Creator {
 		String ISPnubAVR = (args[1]).toLowerCase();
 		String lowFuse="";
 		String highFuse="";
+		String extFuse="";
 		String lockFuse="";
 		switch(ISPnubAVR) {
-			case "atmega1284p":
-			case "atmega1284p_compat":
+			case "atmega1284":
+			case "atmega1284_compat":
+			case "atmega644":
 				lowFuse="0xE2";
 				highFuse="0xD9";
-				lockFuse="0x3C";
-			case "atmega328_8mhz":
-			case "atmega328_16mhz":
-				
+				extFuse="0xFD";
+				lockFuse="0xC0";
 			break;
+			
+			case "atmega328_16mhz":		//arduino uno r3
+				lowFuse="0xFF";
+				highFuse="0xDF";
+				extFuse="0xFD";
+				lockFuse="0xC0";
+			break;
+			
+			case "atmega16":
+			case "atmega32":
+				lowFuse="0xA4";
+				highFuse="0xD9";
+				lockFuse="0x00";
+			break;
+			
+			case "atmega328_8mhz":
 			default:
-				System.out.println("AVR not supported");
+				System.out.println("AVR not supported!");
 				return;
 		}
 		
@@ -90,7 +106,7 @@ public class Creator {
         // we have finished
         System.out.println();
         System.out.println("Finished! Now you can flash the ISPnub module, e.g. with avrdude:");
-        System.out.println("avrdude -c YOURPROGRAMMER -p " + ISPnubAVR + "-U lfuse:w:" + lowFuse + ":m -U hfuse:w:" + highFuse + ":m -U flash:w:" + outfilename + " -U lock:w:" + lockFuse + ":m");
+        System.out.println("avrdude -c YOURPROGRAMMER -p " + ISPnubAVR + " -U lfuse:w:" + lowFuse + ":m -U hfuse:w:" + highFuse + ":m -U efuse:w:" + extFuse + ":m -U lock:w:" + lockFuse + ":m -U flash:w:" + outfilename);
         System.out.println();
     }
 }

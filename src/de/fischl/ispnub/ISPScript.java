@@ -33,7 +33,8 @@ public class ISPScript {
     public static final byte CMD_DECCOUNTER = 0x07;
     public static final byte CMD_EEPROM = 0x08;
     public static final byte CMD_END = (byte)0xff;
-
+	
+										//	    0       1        2       3      4        5        6
     public static final int[] SCK_OPTIONS = {2000000, 500000, 125000, 62500, 4000000, 1000000, 250000};
     
     
