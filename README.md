@@ -28,8 +28,10 @@ java -jar ISPnubCreator.jar test.ispnub [atmega1284|atmega1284_compat|atmega328_
 ```
 Now the generated "ispnub.hex" can be flashed with your favorite programmer into the ISPnub module.
 
-Supported AVR
+Supported Boards and AVR
 -------------
+The firmware is optimized for use on the ISPnubMod-Board (see https://github.com/mgroel/ISPnubMod). Nevertheless there is a compatibility-firmware included to be used on the original ISPnub-Board. To use this firmware call ISPnubModCreator with the argument "atmega1284_compat".
+
 ATmega1284 (tested)
 ATmega328@16MHz (tested)
 ATmega16
