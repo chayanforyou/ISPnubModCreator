@@ -1,13 +1,13 @@
-ISPnubCreator
+ISPnubModCreator
 =============
 
-Creates hex file for ISPnub (http://www.fischl.de/ispnub/) from given programming instruction script.
-ISPnubCreator is written in Java.
+Creates hex file for ISPnubMod (https://github.com/mgroel/ISPnubMod, http://www.fischl.de/ispnub/) from given programming instruction script.
+ISPnubModCreator is written in Java.
 
 Usage
 -----
 
-Example of programming instruction script, programming an ATmega8 ("../test..main.hex" contains the firmware
+Example of programming instruction script, programming an ATmega8 ("../test/main.hex" contains the firmware
 for the target Atmega8). "test.ispnub":
 ```
 CONNECT 2000000                           ; connect with SCK = 2 MHz 
@@ -22,11 +22,20 @@ DECCOUNTER 10                             ; allow 10 programming cycles
 END
 ```
 
-Call ISPnubCreator to create the hex file for ISPnub:
+Call ISPnubModCreator to create the hex file for ISPnubMod. Compared to the original ISPnubCreator there are several AVR supported on the ISPnub. The calling syntax for ISPnubCreator is as following:
 ```
-java -jar ISPnubCreator.jar test.ispnub ispnub.hex
+java -jar ISPnubCreator.jar test.ispnub [atmega1284|atmega1284_compat|atmega328_16MHz|atmega16|atmega32|atmega644] ispnub.hex
 ```
 Now the generated "ispnub.hex" can be flashed with your favorite programmer into the ISPnub module.
+
+Supported AVR
+-------------
+ATmega1284 (tested)
+ATmega328@16MHz (tested)
+ATmega16
+ATmega32
+ATmega644
+
 
 
 Build
